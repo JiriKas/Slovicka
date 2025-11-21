@@ -1,110 +1,113 @@
 import React, { useState } from 'react';
-import { ProficiencyLevel, PredefinedTopic } from '../types';
+import { PredefinedTopic } from '../types';
 import { PREDEFINED_TOPICS } from '../data/predefinedTopics';
 import { Button } from './Button';
 
 interface SetupFormProps {
-  onSubmit: (level: string, topic: string, isPredefined: boolean) => void;
+  onSubmit: (topic: string, isPredefined: boolean) => void;
   isLoading: boolean;
+  hasApiKey: boolean;
 }
 
-export const SetupForm: React.FC<SetupFormProps> = ({ onSubmit, isLoading }) => {
-  const [level, setLevel] = useState<ProficiencyLevel>(ProficiencyLevel.CHILD);
+export const SetupForm: React.FC<SetupFormProps> = ({ onSubmit, isLoading, hasApiKey }) => {
   const [customTopic, setCustomTopic] = useState('');
 
   const handleCustomSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (customTopic.trim()) {
-      onSubmit(level, customTopic, false);
+    if (customTopic.trim() && hasApiKey) {
+      onSubmit(customTopic, false);
     }
   };
 
   const handlePredefinedClick = (topic: PredefinedTopic) => {
-    // For predefined, we pass the ID or Label. 
-    // In App.tsx we will look it up, or we can pass the ID as the topic.
-    onSubmit(level, topic.id, true);
+    onSubmit(topic.id, true);
   };
 
   return (
-    <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden border-b-8 border-sky-200 flex flex-col md:flex-row">
+    <div className="w-full max-w-4xl bg-white rounded-3xl shadow-xl overflow-hidden border-b-8 border-sky-200 flex flex-col">
       
-      {/* Left Column: Level Selection */}
-      <div className="md:w-1/3 bg-slate-50 p-6 md:p-8 border-r border-slate-100 flex flex-col justify-center">
-        <div className="mb-8 text-center md:text-left">
-          <h1 className="text-3xl font-black text-sky-500 tracking-wide mb-2">🇬🇧 English</h1>
-          <p className="text-slate-500 font-medium">Nastavení výuky</p>
-        </div>
-
-        <div className="space-y-4">
-          <label className="block text-slate-700 font-bold text-lg ml-1">Úroveň angličtiny</label>
-          <div className="space-y-3">
-            {Object.values(ProficiencyLevel).map((lvl) => (
-              <label 
-                key={lvl} 
-                className={`block p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                  level === lvl 
-                    ? 'border-sky-400 bg-sky-50 ring-2 ring-sky-200 ring-offset-1' 
-                    : 'border-slate-200 hover:border-sky-200 hover:bg-white'
-                }`}
-              >
-                <input 
-                  type="radio" 
-                  name="level" 
-                  value={lvl} 
-                  checked={level === lvl}
-                  onChange={(e) => setLevel(e.target.value as ProficiencyLevel)}
-                  className="hidden"
-                />
-                <span className="font-medium text-slate-700">{lvl}</span>
-              </label>
-            ))}
-          </div>
-        </div>
+      {/* Header */}
+      <div className="bg-sky-50 p-8 border-b border-sky-100 text-center">
+        <h1 className="text-4xl font-black text-sky-500 tracking-wide mb-2 flex items-center justify-center gap-3">
+          <span className="text-5xl">🇬🇧</span> 
+          Slovíčka Hrou
+        </h1>
+        <p className="text-slate-500 font-medium text-lg">
+          {hasApiKey ? "Vyber si téma a začni se učit!" : "Offline režim - vyber si kartičky"}
+        </p>
       </div>
 
-      {/* Right Column: Topic Selection */}
-      <div className="md:w-2/3 p-6 md:p-8 bg-white">
-        <h2 className="text-2xl font-bold text-slate-700 mb-6">Vyber si téma</h2>
+      {/* Content - Topic Selection */}
+      <div className="p-6 md:p-10 bg-white">
         
-        <div className="grid grid-cols-2 gap-4 mb-8">
+        <h3 className="text-slate-400 font-bold uppercase text-sm tracking-wider mb-4">Přednastavená témata (Offline)</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
           {PREDEFINED_TOPICS.map((topic) => (
             <button
               key={topic.id}
               onClick={() => handlePredefinedClick(topic)}
               disabled={isLoading}
-              className={`group relative overflow-hidden p-6 rounded-2xl border-b-4 transition-all transform active:scale-95 text-left h-32 flex flex-col justify-between ${topic.color} hover:brightness-95`}
+              className={`group relative overflow-hidden p-6 rounded-2xl border-b-4 transition-all transform active:scale-95 text-left h-40 flex flex-col justify-between ${topic.color} hover:brightness-95 shadow-sm hover:shadow-md`}
             >
-              <span className="text-4xl absolute top-4 right-4 opacity-40 group-hover:scale-125 transition-transform duration-300">{topic.icon}</span>
-              <span className="font-black text-xl relative z-10">{topic.label}</span>
-              <span className="text-xs font-bold uppercase tracking-wider opacity-70">Rychlá hra ⚡</span>
+              <span className="text-6xl absolute -bottom-2 -right-2 opacity-30 group-hover:scale-125 group-hover:rotate-12 transition-transform duration-300 text-gray-900">{topic.icon}</span>
+              <div>
+                <span className="font-black text-2xl block mb-1 relative z-10">{topic.label}</span>
+                <span className="text-xs font-bold uppercase tracking-wider opacity-70 bg-white/40 px-2 py-1 rounded-lg inline-block">
+                  ⚡ Ihned
+                </span>
+              </div>
             </button>
           ))}
         </div>
 
-        <div className="relative border-t-2 border-slate-100 pt-6 mt-6">
-           <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white px-4 text-slate-400 text-sm font-bold">NEBO</span>
+        <div className="relative border-t-2 border-slate-100 pt-10">
+           <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white px-4 text-slate-400 text-sm font-bold">
+             AI GENERÁTOR
+           </span>
            
-           <form onSubmit={handleCustomSubmit} className="space-y-4">
-             <label className="block text-slate-700 font-bold ml-1">Vlastní téma (Generováno AI ✨)</label>
-             <div className="flex gap-2 flex-col sm:flex-row">
-               <input
-                 type="text"
-                 value={customTopic}
-                 onChange={(e) => setCustomTopic(e.target.value)}
-                 placeholder="např. Vesmír, Dinosauři, Princezny..."
-                 className="flex-1 p-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-sky-400 font-medium text-slate-700 placeholder:text-slate-300"
-                 disabled={isLoading}
-               />
-               <Button 
-                 type="submit" 
-                 disabled={isLoading || !customTopic.trim()}
-                 variant="primary"
-                 className="min-w-[140px]"
-               >
-                 {isLoading ? 'Načítám...' : 'Start!'}
-               </Button>
-             </div>
-           </form>
+           <div className={`transition-opacity duration-300 ${hasApiKey ? 'opacity-100' : 'opacity-50 grayscale select-none'}`}>
+             <form onSubmit={handleCustomSubmit} className="max-w-2xl mx-auto space-y-4">
+               <div className="flex justify-between items-center mb-2">
+                  <label className="block text-slate-700 font-bold text-lg">
+                    Vlastní téma
+                    {hasApiKey && <span className="ml-2 text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full">Powered by Gemini</span>}
+                  </label>
+                  {!hasApiKey && (
+                    <span className="text-xs font-bold text-red-400 border border-red-200 px-2 py-1 rounded bg-red-50">
+                      🔒 Vyžaduje API Key
+                    </span>
+                  )}
+               </div>
+               
+               <div className="flex gap-3 flex-col sm:flex-row relative">
+                 <input
+                   type="text"
+                   value={customTopic}
+                   onChange={(e) => setCustomTopic(e.target.value)}
+                   placeholder={hasApiKey ? "např. Vesmír, Dinosauři..." : "AI funkce jsou vypnuté"}
+                   className="flex-1 p-5 text-lg bg-slate-50 border-2 border-slate-200 rounded-2xl focus:outline-none focus:border-sky-400 font-medium text-slate-700 placeholder:text-slate-300 transition-colors disabled:cursor-not-allowed"
+                   disabled={isLoading || !hasApiKey}
+                 />
+                 <Button 
+                   type="submit" 
+                   disabled={isLoading || !customTopic.trim() || !hasApiKey}
+                   variant="primary"
+                   className="min-w-[140px] text-lg"
+                 >
+                   {isLoading ? 'Načítám...' : 'Start!'}
+                 </Button>
+                 
+                 {!hasApiKey && (
+                   <div className="absolute inset-0 bg-white/10 cursor-not-allowed z-10" title="Pro vlastní témata nastavte API Key"></div>
+                 )}
+               </div>
+               {!hasApiKey && (
+                  <p className="text-xs text-center text-slate-400 mt-2">
+                    Pro generování vlastních témat je potřeba nastavit <code>API_KEY</code> v prostředí aplikace.
+                  </p>
+               )}
+             </form>
+           </div>
         </div>
       </div>
     </div>

@@ -9,7 +9,7 @@ interface FlashCardProps {
   item: VocabularyItem;
   onNext: () => void;
   isLast: boolean;
-  isInstantMode: boolean; // If true, use native TTS and Emojis
+  isInstantMode: boolean; // If true, use native TTS and Local Assets (Emojis)
 }
 
 export const FlashCard: React.FC<FlashCardProps> = ({ item, onNext, isLast, isInstantMode }) => {
@@ -21,13 +21,14 @@ export const FlashCard: React.FC<FlashCardProps> = ({ item, onNext, isLast, isIn
     let mounted = true;
 
     const fetchImage = async () => {
-      // If we have a predefined emoji, use it immediately
-      if (item.emoji) {
+      // OFFLINE / INSTANT MODE
+      // We strictly use the emoji as the "image" from the file system
+      if (isInstantMode && item.emoji) {
         setImageLoading(false);
         return;
       }
 
-      // Otherwise generate AI image
+      // AI MODE
       setImageLoading(true);
       setImageUrl(null);
       
@@ -44,14 +45,14 @@ export const FlashCard: React.FC<FlashCardProps> = ({ item, onNext, isLast, isIn
     return () => {
       mounted = false;
     };
-  }, [item]);
+  }, [item, isInstantMode]);
 
   const handlePlayAudio = async () => {
     if (isPlaying) return;
     setIsPlaying(true);
     
     try {
-      // Use native browser speech for instant mode, Gemini for custom mode
+      // Use native browser speech for instant mode (works offline), Gemini for custom mode
       await playAudio(item.english, isInstantMode);
     } catch (error) {
       console.error("Audio playback failed", error);
@@ -64,15 +65,16 @@ export const FlashCard: React.FC<FlashCardProps> = ({ item, onNext, isLast, isIn
   useEffect(() => {
     const timer = setTimeout(() => {
       handlePlayAudio();
-    }, 600); // Small delay for better UX/Transition
+    }, 600); 
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Empty dependency array ensures this runs once per card instance (parent uses key)
+  }, []); 
 
   return (
     <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden border-b-8 border-yellow-200 transform transition-all">
       <div className="relative h-64 md:h-80 bg-slate-100 flex items-center justify-center overflow-hidden group cursor-pointer" onClick={() => handlePlayAudio()}>
-        {item.emoji ? (
+        {isInstantMode && item.emoji ? (
+             // Local Asset Rendering (Emoji as Image)
              <div className="text-[150px] md:text-[180px] drop-shadow-xl select-none transform group-hover:scale-110 transition-transform duration-300">
                {item.emoji}
              </div>
@@ -108,7 +110,7 @@ export const FlashCard: React.FC<FlashCardProps> = ({ item, onNext, isLast, isIn
             onClick={(e) => { e.stopPropagation(); handlePlayAudio(); }}
             disabled={isPlaying}
             className="flex items-center gap-2 px-6 py-3 rounded-full bg-sky-100 text-sky-700 font-bold hover:bg-sky-200 transition-colors disabled:opacity-50 active:scale-95"
-            title="Přehrát výslovnost"
+            title={isInstantMode ? "Přehrát (Offline hlas)" : "Přehrát (AI hlas)"}
             >
             {isPlaying ? (
                 <>

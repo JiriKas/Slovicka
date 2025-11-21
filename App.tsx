@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SetupForm } from './components/SetupForm';
 import { FlashCard } from './components/FlashCard';
 import { generateVocabularyList } from './services/geminiService';
@@ -20,12 +20,19 @@ export default function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [isInstantMode, setIsInstantMode] = useState(false);
+  const [hasApiKey, setHasApiKey] = useState(false);
 
-  const handleStartSession = async (level: string, topic: string, isPredefined: boolean) => {
+  useEffect(() => {
+    // Check if API key is present in the environment
+    const key = process.env.API_KEY;
+    setHasApiKey(!!key && key.length > 0);
+  }, []);
+
+  const handleStartSession = async (topic: string, isPredefined: boolean) => {
     setError(null);
     
     if (isPredefined) {
-      // INSTANT START
+      // INSTANT START (Offline Mode)
       const predefinedTopic = PREDEFINED_TOPICS.find(t => t.id === topic);
       if (predefinedTopic) {
         setVocabulary(predefinedTopic.items);
@@ -38,11 +45,19 @@ export default function App() {
       return;
     }
 
-    // AI START
+    // AI START (Requires API Key)
+    if (!hasApiKey) {
+      setError("Pro vlastní témata je potřeba nastavit API klíč.");
+      return;
+    }
+
     setIsInstantMode(false);
     setAppState(AppState.LOADING_LIST);
     try {
-      const items = await generateVocabularyList(level, topic);
+      // Hardcoded level for children
+      const levelDescription = "Child / Toddler (Picture based learning, very simple words)";
+      const items = await generateVocabularyList(levelDescription, topic);
+      
       if (items.length === 0) {
         setError("Omlouvám se, nepodařilo se mi vymyslet slovíčka na toto téma. Zkus to prosím znovu.");
         setAppState(AppState.SETUP);
@@ -53,7 +68,7 @@ export default function App() {
       setAppState(AppState.LEARNING);
     } catch (err) {
       console.error(err);
-      setError("Něco se pokazilo při komunikaci s mým mozkem. Zkus to prosím za chvíli.");
+      setError("Něco se pokazilo při komunikaci s mým mozkem. Zkontroluj připojení nebo API klíč.");
       setAppState(AppState.SETUP);
     }
   };
@@ -83,7 +98,11 @@ export default function App() {
               {error}
             </div>
           )}
-          <SetupForm onSubmit={handleStartSession} isLoading={false} />
+          <SetupForm 
+            onSubmit={handleStartSession} 
+            isLoading={false} 
+            hasApiKey={hasApiKey}
+          />
         </div>
       )}
 

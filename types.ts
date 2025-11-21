@@ -1,10 +1,3 @@
-export enum ProficiencyLevel {
-  CHILD = 'Dítě (obrázkové)',
-  BEGINNER = 'Začátečník (A1)',
-  INTERMEDIATE = 'Mírně pokročilý (A2/B1)',
-  ADVANCED = 'Pokročilý (B2+)'
-}
-
 export interface VocabularyItem {
   english: string;
   czech: string;

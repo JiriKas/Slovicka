@@ -23,8 +23,15 @@ export default function App() {
   const [hasApiKey, setHasApiKey] = useState(false);
 
   useEffect(() => {
-    // Check if API key is present in the environment
-    const key = process.env.API_KEY;
+    // Safely check for API key to prevent crash if 'process' is not defined in the browser
+    let key = '';
+    try {
+      if (typeof process !== 'undefined' && process.env) {
+        key = process.env.API_KEY || '';
+      }
+    } catch (e) {
+      console.warn("Environment 'process' not accessible, defaulting to offline mode.");
+    }
     setHasApiKey(!!key && key.length > 0);
   }, []);
 

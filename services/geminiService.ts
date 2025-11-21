@@ -33,7 +33,16 @@ async function decodeAudioData(
 }
 
 const getClient = () => {
-  const apiKey = process.env.API_KEY;
+  let apiKey = '';
+  try {
+    // Safely check for process.env availability
+    if (typeof process !== 'undefined' && process.env) {
+      apiKey = process.env.API_KEY || '';
+    }
+  } catch (e) {
+    console.warn("Environment 'process' not accessible");
+  }
+
   if (!apiKey) {
     throw new Error("API Key is missing via process.env.API_KEY");
   }

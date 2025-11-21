@@ -72,5 +72,41 @@ export const PREDEFINED_TOPICS: PredefinedTopic[] = [
       { english: 'Soap', czech: 'Mýdlo', visualDescription: 'A bar of soap', emoji: '🧼' },
       { english: 'Sleep', czech: 'Spánek', visualDescription: 'Sleeping person', emoji: '😴' }
     ]
+  },
+  {
+    id: 'space',
+    label: 'Vesmír',
+    icon: '🚀',
+    color: 'bg-indigo-100 border-indigo-300 text-indigo-800',
+    items: [
+      { english: 'Sun', czech: 'Slunce', visualDescription: 'The bright yellow sun', emoji: '☀️' },
+      { english: 'Moon', czech: 'Měsíc', visualDescription: 'The moon in the night sky', emoji: '🌕' },
+      { english: 'Star', czech: 'Hvězda', visualDescription: 'A shiny star', emoji: '⭐️' },
+      { english: 'Earth', czech: 'Země', visualDescription: 'Planet Earth from space', emoji: '🌍' },
+      { english: 'Rocket', czech: 'Raketa', visualDescription: 'A space rocket launching', emoji: '🚀' },
+      { english: 'Astronaut', czech: 'Astronaut', visualDescription: 'An astronaut in a suit', emoji: '👨‍🚀' },
+      { english: 'Alien', czech: 'Mimozemšťan', visualDescription: 'A friendly green alien', emoji: '👽' },
+      { english: 'Planet', czech: 'Planeta', visualDescription: 'A ringed planet like Saturn', emoji: '🪐' },
+      { english: 'Comet', czech: 'Kometa', visualDescription: 'A flying comet', emoji: '☄️' },
+      { english: 'Telescope', czech: 'Dalekohled', visualDescription: 'A telescope to see stars', emoji: '🔭' }
+    ]
+  },
+  {
+    id: 'hockey',
+    label: 'Hokej',
+    icon: '🏒',
+    color: 'bg-sky-50 border-sky-200 text-sky-800',
+    items: [
+      { english: 'Hockey Stick', czech: 'Hokejka', visualDescription: 'A wooden hockey stick', emoji: '🏒' },
+      { english: 'Puck', czech: 'Puk', visualDescription: 'A black hockey puck', emoji: '⚫' },
+      { english: 'Skates', czech: 'Brusle', visualDescription: 'Ice skates', emoji: '⛸️' },
+      { english: 'Goal', czech: 'Branka', visualDescription: 'A hockey goal net', emoji: '🥅' },
+      { english: 'Ice', czech: 'Led', visualDescription: 'Blue ice surface', emoji: '🧊' },
+      { english: 'Helmet', czech: 'Helma', visualDescription: 'A safety helmet', emoji: '⛑️' },
+      { english: 'Referee', czech: 'Rozhodčí', visualDescription: 'A referee with a whistle', emoji: '🦓' },
+      { english: 'Trophy', czech: 'Pohár', visualDescription: 'A gold championship cup', emoji: '🏆' },
+      { english: 'Team', czech: 'Tým', visualDescription: 'Hockey players together', emoji: '👕' },
+      { english: 'Whistle', czech: 'Píšťalka', visualDescription: 'A referee whistle', emoji: '📣' }
+    ]
   }
 ];

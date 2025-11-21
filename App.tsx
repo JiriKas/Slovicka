@@ -88,6 +88,12 @@ export default function App() {
     }
   };
 
+  const handlePrevious = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(prev => prev - 1);
+    }
+  };
+
   const handleRestart = () => {
     setVocabulary([]);
     setCurrentIndex(0);
@@ -130,7 +136,9 @@ export default function App() {
              key={currentIndex}
              item={vocabulary[currentIndex]} 
              onNext={handleNext}
+             onPrevious={handlePrevious}
              isLast={currentIndex === vocabulary.length - 1}
+             isFirst={currentIndex === 0}
              isInstantMode={isInstantMode}
            />
            

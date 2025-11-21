@@ -8,11 +8,13 @@ import { Loader } from './Loader';
 interface FlashCardProps {
   item: VocabularyItem;
   onNext: () => void;
+  onPrevious: () => void;
   isLast: boolean;
+  isFirst: boolean;
   isInstantMode: boolean; // If true, use native TTS and Local Assets (Emojis)
 }
 
-export const FlashCard: React.FC<FlashCardProps> = ({ item, onNext, isLast, isInstantMode }) => {
+export const FlashCard: React.FC<FlashCardProps> = ({ item, onNext, onPrevious, isLast, isFirst, isInstantMode }) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageLoading, setImageLoading] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -131,9 +133,21 @@ export const FlashCard: React.FC<FlashCardProps> = ({ item, onNext, isLast, isIn
             </button>
         </div>
 
-        <div className="pt-6 border-t border-slate-100 w-full">
-           <Button onClick={onNext} fullWidth variant="secondary" className="text-lg py-4">
-             {isLast ? 'Dokončit lekci 🎉' : 'Další slovíčko ➔'}
+        <div className="pt-6 border-t border-slate-100 w-full flex gap-4">
+           <Button 
+             onClick={onPrevious} 
+             variant="outline" 
+             disabled={isFirst}
+             className="flex-1"
+           >
+             ⬅ Zpět
+           </Button>
+           <Button 
+             onClick={onNext} 
+             variant="secondary" 
+             className="flex-[2] text-lg"
+           >
+             {isLast ? 'Dokončit 🎉' : 'Další ➔'}
            </Button>
         </div>
       </div>
